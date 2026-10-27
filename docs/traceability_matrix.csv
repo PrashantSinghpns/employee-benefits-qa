@@ -1,0 +1,13 @@
+
+Requirement,Description,Manual_Tests,Automated_Tests
+R02,Inactive employee,TC04,test_inactive_employee
+R03,Inactive plan,TC05,test_inactive_plan
+R04,Employment type,TC06,test_wrong_employment_type
+R05,Waiting period,TC07-TC10,test_waiting_period
+R06,Enrollment window,TC11-TC14,test_before_window
+R07,Duplicate prevention,TC15-TC16,test_duplicate
+R08,Input validation,TC17-TC19,test_invalid_date
+R09,Dependent permission,TC30,test_disable_dependents
+R10,Dependent ownership,TC20,test_wrong_dependent
+R11,Plan configuration,TC23-TC30,test_configuration
+R12,Atomic enrollment,TC22,test_transaction_rollback

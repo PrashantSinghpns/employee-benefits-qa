@@ -1,0 +1,32 @@
+
+Test_ID,Requirement,Scenario,Expected_Result,Actual_Result,Status
+TC01,R02-R07,Eligible employee without dependents,Enrollment saved,,Not Run
+TC02,R09-R12,Eligible employee with own dependent,Enrollment and links saved,,Not Run
+TC03,R07,Employee enrolls in a different plan,Enrollment accepted,,Not Run
+TC04,R02,Inactive employee,Rejected,,Not Run
+TC05,R03,Inactive plan,Rejected,,Not Run
+TC06,R04,Incorrect employment type,Rejected,,Not Run
+TC07,R05,Future hire with zero waiting period,Rejected,,Not Run
+TC08,R05,One day before eligibility,Rejected,,Not Run
+TC09,R05,Exactly on eligibility date,Accepted,,Not Run
+TC10,R05,One day after eligibility date,Accepted,,Not Run
+TC11,R06,Before enrollment window,Rejected,,Not Run
+TC12,R06,First day of enrollment window,Accepted,,Not Run
+TC13,R06,Last day of enrollment window,Accepted,,Not Run
+TC14,R06,After enrollment window,Rejected,,Not Run
+TC15,R07,Duplicate enrollment,Rejected,,Not Run
+TC16,R07,Rapid duplicate submission,At most one saved,,Not Run
+TC17,R08,Missing employee ID,Validation error,,Not Run
+TC18,R08,Nonexistent employee ID,Rejected,,Not Run
+TC19,R08,Invalid enrollment date,Rejected,,Not Run
+TC20,R10,Dependent belongs to another employee,Rejected without saving,,Not Run
+TC21,R09-R12,Duplicate dependent ID,Rejected,,Not Run
+TC22,R12,Dependent insert database failure,Entire transaction rolled back,,Not Run
+TC23,R11,Waiting period changed to zero,New hire eligible on hire date,,Not Run
+TC24,R11,Waiting period increased to 60,Employee below 60 days rejected,,Not Run
+TC25,R11,Eligibility changed to ANY,Eligible part-time employee accepted,,Not Run
+TC26,R11,Eligibility restricted to FULL_TIME,Part-time employee rejected,,Not Run
+TC27,R11,Enrollment window start moved,Earlier date rejected,,Not Run
+TC28,R11,Enrollment window end moved,Later date rejected,,Not Run
+TC29,R11,Plan deactivated,Enrollment rejected,,Not Run
+TC30,R11,Dependents disabled,Dependent enrollment rejected,,Not Run
