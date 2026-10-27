@@ -21,8 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install -r employee-benefits-qa/requirements.txt # Correct file location.
 
       - name: Run pytest
         run: |
