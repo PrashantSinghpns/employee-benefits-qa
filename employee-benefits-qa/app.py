@@ -66,7 +66,9 @@ HTML = """
         <label>Employee</label>
         <select name="employee_id" required>
             {% for e in employees %}
-            <option value="{{ e['employee_id'] }}">
+            {# Retain the submitted employee instead of selecting the first record. #}
+            <option value="{{ e['employee_id'] }}"
+                {% if request.form.get('employee_id') == e['employee_id']|string %}selected{% endif %}>
                 {{ e['name'] }} — {{ e['employment_type'] }}
             </option>
             {% endfor %}
@@ -75,7 +77,9 @@ HTML = """
         <label>Benefit Plan</label>
         <select name="plan_id" required>
             {% for p in plans %}
-            <option value="{{ p['plan_id'] }}">
+            {# Retain the plan on both successful and rejected submissions. #}
+            <option value="{{ p['plan_id'] }}"
+                {% if request.form.get('plan_id') == p['plan_id']|string %}selected{% endif %}>
                 {{ p['name'] }}
             </option>
             {% endfor %}
@@ -83,7 +87,7 @@ HTML = """
 
         <label>Enrollment Date</label>
         <input type="date" name="enrollment_date"
-               value="2026-10-27" required>
+               value="{{ request.form.get('enrollment_date', '2026-10-27') }}" required>
                
 <label>Dependents (optional)</label>
 
@@ -92,6 +96,8 @@ HTML = """
     <input type="checkbox"
            name="dependent_ids"
            value="{{ d['dependent_id'] }}"
+           {# Retain checked dependents when the form is rendered again. #}
+           {% if d['dependent_id']|string in request.form.getlist('dependent_ids') %}checked{% endif %}
            style="width:auto">
     {{ d['name'] }} — Employee ID {{ d['employee_id'] }}
 </label>
@@ -275,7 +281,9 @@ CONFIG_HTML = """
     <p>Select Plan:
         <select name="plan_id" required>
         {% for p in plans %}
-            <option value="{{ p['plan_id'] }}">
+            {# Retain the plan on both successful and rejected submissions. #}
+            <option value="{{ p['plan_id'] }}"
+                {% if request.form.get('plan_id') == p['plan_id']|string %}selected{% endif %}>
                 {{ p['name'] }}
             </option>
         {% endfor %}
@@ -284,32 +292,36 @@ CONFIG_HTML = """
 
     <p>Eligible Employment Type:
         <select name="eligible_type">
-            <option>FULL_TIME</option>
-            <option>PART_TIME</option>
-            <option>CONTRACT</option>
-            <option>ANY</option>
+            {# Preserve the submitted eligibility type. #}
+            {% for kind in ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'ANY'] %}
+            <option value="{{ kind }}"
+                {% if request.form.get('eligible_type', 'FULL_TIME') == kind %}selected{% endif %}>{{ kind }}</option>
+            {% endfor %}
         </select>
     </p>
 
     <p>Waiting Period (0–365 days):
         <input type="number" name="waiting_days"
-               min="0" max="365" required>
+               min="0" max="365" value="{{ request.form.get('waiting_days', '') }}" required>
     </p>
 
     <p>Enrollment Start:
-        <input type="date" name="window_start" required>
+        <input type="date" name="window_start" value="{{ request.form.get('window_start', '') }}" required>
     </p>
 
     <p>Enrollment End:
-        <input type="date" name="window_end" required>
+        <input type="date" name="window_end" value="{{ request.form.get('window_end', '') }}" required>
     </p>
 
     <p>Active:
-        <input type="checkbox" name="active" checked>
+        <!-- Default to active only on the initial GET, not after an unchecked submission. -->
+        <input type="checkbox" name="active"
+               {% if request.method == 'GET' or 'active' in request.form %}checked{% endif %}>
     </p>
 
     <p>Allow Dependents:
-        <input type="checkbox" name="allow_dependents">
+        <input type="checkbox" name="allow_dependents"
+               {% if 'allow_dependents' in request.form %}checked{% endif %}>
     </p>
 
     <button type="submit">Save Configuration</button>
