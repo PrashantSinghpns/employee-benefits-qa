@@ -2,6 +2,12 @@
 
 A local Flask + SQLite lab for configuring eligibility and testing employee-benefit enrollment. All records are fictional. This is an original learning project, not Wipro's proprietary TBA system or a production HR application.
 
+## Latest verified execution
+
+All **30 worksheet scenarios** passed through automated Flask requests and SQLite checks; the full CI suite passed **106 tests**. [Execution report](docs/scenario_execution_report.md) · [Successful run](https://github.com/PrashantSinghpns/employee-benefits-qa/actions/runs/40518820916) · [Per-case evidence](evidence/campaign/summary.json).
+
+The worksheet preserves its original browser/manual result fields and adds separate Scenario_Status and Automated_* columns. There are still 4 recorded agent-browser passes and 26 cases without browser/manual execution. Do not claim 30 manual UI passes.
+
 ## Features
 
 - Active-employee and active-plan checks; configurable employment type and waiting period.
@@ -47,7 +53,7 @@ The SQL runner uses the current local database. Restore the baseline first when 
 - [Schema](employee-benefits-qa/sql/schema.sql) and [sample data](employee-benefits-qa/sql/sample_data.sql)
 - [20 SQL queries](employee-benefits-qa/sql/queries.sql)
 - [Test plan](docs/test_plan.md)
-- [30 detailed manual cases](employee-benefits-qa/docs/manual_test_cases.csv)
+- [30 detailed cases with separate browser and automated results](employee-benefits-qa/docs/manual_test_cases.csv)
 - [Requirements traceability](docs/traceability_matrix.csv)
 - [Execution report and limitations](docs/test_execution_report.md)
 - [Automated test report](docs/pytest-results.xml)

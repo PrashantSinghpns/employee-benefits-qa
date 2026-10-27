@@ -1,3 +1,13 @@
+# Latest execution status
+
+The [worksheet campaign report](scenario_execution_report.md) records the latest verified execution: **30/30 automated worksheet scenarios passed; 106/106 full-suite tests passed** on [GitHub Actions](https://github.com/PrashantSinghpns/employee-benefits-qa/actions/runs/40518820916). Per-case request and database evidence is committed under evidence/campaign/.
+
+The CSV retains the original 4 browser passes and 26 unexecuted browser/manual cases, with separate Automated_* result columns for all 30 scenarios. Automated scenario coverage is complete for this worksheet; manual/browser execution remains a separate record. No human manual execution is claimed.
+
+---
+
+The following is the historical local verification report. Its 69-test XML and four browser checks predate the latest CI campaign.
+
 # Test execution report
 
 ## Version and environment
