@@ -1,0 +1,8 @@
+# Generated data and caches stay local.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+*.db
+*.db.*.bak
+artifacts/

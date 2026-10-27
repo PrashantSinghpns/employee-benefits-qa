@@ -1,5 +1,7 @@
 from flask import Flask, render_template_string, request
 import sqlite3
+import re
+from contextlib import closing
 from pathlib import Path
 from datetime import date, timedelta
 
@@ -8,10 +10,30 @@ DB = Path(__file__).parent / "benefits.db"
 
 
 def get_db():
-    conn = sqlite3.connect(DB)
+    conn = sqlite3.connect(app.config.get("DATABASE", DB))
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
+
+
+def parse_id(value):
+    # Reject oversized values before SQLite converts them to signed 64-bit integers.
+    if isinstance(value, bool) or not isinstance(value, (str, int)):
+        raise ValueError("Invalid ID")
+    text = str(value)
+    if not re.fullmatch(r"[0-9]{1,19}", text):
+        raise ValueError("Invalid ID")
+    number = int(text)
+    if not 1 <= number <= 9223372036854775807:
+        raise ValueError("Invalid ID")
+    return number
+
+
+def parse_date(value):
+    # A single format keeps scenario inputs and database comparisons consistent.
+    if not isinstance(value, str) or not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value):
+        raise ValueError("Date must use YYYY-MM-DD")
+    return date.fromisoformat(value)
 
 
 HTML = """
@@ -37,6 +59,8 @@ HTML = """
 <body>
     <h1>Employee Benefits Administration</h1>
     <p>Enrollment & Eligibility Testing</p>
+    <p><a href="/configure">Configure benefit plans</a></p>
+    <p>Use fictional records and an explicit scenario date for repeatable testing.</p>
 
     <form method="POST">
         <label>Employee</label>
@@ -79,6 +103,13 @@ HTML = """
     {% if message %}
     <div class="result">{{ message }}</div>
     {% endif %}
+    <h2>Current records</h2>
+    {% for title, rows in [('Employees', employees), ('Plans', plans),
+                            ('Dependents', dependents), ('Enrollments', enrollments)] %}
+    <details><summary>{{ title }} ({{ rows|length }})</summary>
+    {% for row in rows %}<p>{{ dict(row) }}</p>{% else %}<p>No records.</p>{% endfor %}
+    </details>
+    {% endfor %}
 </body>
 </html>
 """
@@ -87,11 +118,9 @@ HTML = """
 def enroll(conn, employee_id, plan_id, enrollment_date, dependent_ids=None):
     # Validate submitted IDs
     try:
-        employee_id = int(employee_id)
-        plan_id = int(plan_id)
-        if employee_id <= 0 or plan_id <= 0:
-            return "Rejected: Invalid ID."
-        submitted = date.fromisoformat(enrollment_date)
+        employee_id = parse_id(employee_id)
+        plan_id = parse_id(plan_id)
+        submitted = parse_date(enrollment_date)
     except (ValueError, TypeError):
         return "Rejected: Invalid input."
 
@@ -140,7 +169,15 @@ def enroll(conn, employee_id, plan_id, enrollment_date, dependent_ids=None):
         return "Rejected: Duplicate enrollment."
     
     
-    dependent_ids = dependent_ids or []
+    if dependent_ids is None:
+        dependent_ids = []
+    if not isinstance(dependent_ids, (list, tuple)):
+        return "Rejected: Invalid dependent IDs."
+    try:
+        # Normalize first, so '1' and '01' identify the same dependent.
+        dependent_ids = [parse_id(value) for value in dependent_ids]
+    except ValueError:
+        return "Rejected: Invalid dependent ID."
 
     if len(dependent_ids) != len(set(dependent_ids)):
         return "Rejected: Duplicate dependent IDs."
@@ -198,7 +235,8 @@ def enroll(conn, employee_id, plan_id, enrollment_date, dependent_ids=None):
 def home():
     message = None
 
-    with get_db() as conn:
+    # SQLite's transaction context does not close its connection; closing does.
+    with closing(get_db()) as conn:
         if request.method == "POST":
             message = enroll(
                 conn,
@@ -220,11 +258,12 @@ def home():
         dependents = conn.execute(
             "SELECT * FROM dependents"
         ).fetchall()
+        enrollments = conn.execute("SELECT * FROM enrollments ORDER BY enrollment_id").fetchall()
 
 
     return render_template_string(
         HTML, employees=employees,
-        plans=plans, message=message, dependents=dependents
+        plans=plans, message=message, dependents=dependents, enrollments=enrollments, dict=dict
     )
 
 
@@ -284,17 +323,17 @@ CONFIG_HTML = """
 def configure():
     message = None
 
-    with get_db() as conn:
+    with closing(get_db()) as conn:
         if request.method == "POST":
             try:
-                plan_id = int(request.form["plan_id"])
+                plan_id = parse_id(request.form["plan_id"])
                 eligible = request.form["eligible_type"]
                 waiting = int(request.form["waiting_days"])
 
-                start = date.fromisoformat(
+                start = parse_date(
                     request.form["window_start"]
                 )
-                end = date.fromisoformat(
+                end = parse_date(
                     request.form["window_end"]
                 )
 

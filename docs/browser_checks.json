@@ -1,0 +1,23 @@
+{
+  "executed_at": "2026-10-27T17:29:25+05:30",
+  "operator": "Codex agent",
+  "method": "Observed browser controls and response; not pytest or human execution",
+  "checks": {
+    "TC08": [
+      "Rejected: Waiting period not completed. UI enrollment count=1.",
+      "evidence/TC08-waiting-rejection.png"
+    ],
+    "TC09": [
+      "Success: Enrollment and dependents saved! UI enrollment count=2.",
+      "evidence/TC09-waiting-boundary.png"
+    ],
+    "TC15": [
+      "Repeated Priya/plan 1/2026-10-27 immediately after TC09. Rejected: Duplicate enrollment. UI count stayed 2.",
+      "evidence/TC15-duplicate-rejection.png"
+    ],
+    "TC25": [
+      "Saved ANY configuration then enrolled Aman/plan 1/2026-10-10. Success; UI count=2 after baseline reset.",
+      "evidence/TC25-part-time-enrollment.png"
+    ]
+  }
+}

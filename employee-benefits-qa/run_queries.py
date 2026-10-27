@@ -10,12 +10,13 @@ if not db_path.exists():
     raise FileNotFoundError("Run database.py first.")
 
 conn = sqlite3.connect(db_path)
+conn.execute("PRAGMA foreign_keys = ON")
 
 sql = (root / "sql/queries.sql").read_text()
 
 # This simple runner expects the file to contain
 # SELECT queries separated by semicolons.
-for query in sql.split(";"):
+for number, query in enumerate(sql.split(";"), 1):
     # Remove comment-only lines
     lines = [
         line for line in query.splitlines()
@@ -27,7 +28,8 @@ for query in sql.split(";"):
         continue
 
     cursor = conn.execute(statement)
-    print("\nQUERY RESULT:")
+    print(f"\nQ{number:02d} RESULT:")
+    print("Columns:", ", ".join(column[0] for column in cursor.description))
     for row in cursor.fetchall():
         print(row)
 

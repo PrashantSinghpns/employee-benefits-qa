@@ -1,13 +1,13 @@
-
-Requirement,Description,Manual_Tests,Automated_Tests
-R02,Inactive employee,TC04,test_inactive_employee
-R03,Inactive plan,TC05,test_inactive_plan
-R04,Employment type,TC06,test_wrong_employment_type
-R05,Waiting period,TC07-TC10,test_waiting_period
-R06,Enrollment window,TC11-TC14,test_before_window
-R07,Duplicate prevention,TC15-TC16,test_duplicate
-R08,Input validation,TC17-TC19,test_invalid_date
-R09,Dependent permission,TC30,test_disable_dependents
-R10,Dependent ownership,TC20,test_wrong_dependent
-R11,Plan configuration,TC23-TC30,test_configuration
-R12,Atomic enrollment,TC22,test_transaction_rollback
+Requirement,Description,Manual_Tests,Automated_Tests,SQL_Checks
+R01,Record display,TC01,test_records_page,"Q01,Q03,Q08,Q09"
+R02,Active employee,TC04,test_inactive_employee;test_rejected_enrollment_form,Q01
+R03,Active plan,TC05;TC29,test_inactive_plan;test_deactivate_plan;test_disabled_checkboxes_persist,"Q03,Q04"
+R04,Employment type,TC06;TC25;TC26,test_wrong_employment_type;test_any_employment_type;test_full_time_only;test_valid_configuration_affects_next_submission,"Q02,Q07"
+R05,Waiting period and hire date,TC07-TC10;TC23;TC24,test_waiting_period;test_waiting_period_boundary;test_zero_waiting_future_hire_rejected;test_zero_waiting_days;test_increased_waiting_days,"Q05,Q06,Q07"
+R06,Inclusive enrollment window,TC11-TC14;TC27;TC28,test_before_window;test_after_window;test_window_boundaries_through_form;test_move_start_date;test_move_end_date,"Q04,Q07,Q20"
+R07,Duplicate prevention,TC03;TC15;TC16,test_duplicate;test_duplicate_prevention;test_repeated_submission_only_saves_once,"Q13,Q16,Q17"
+R08,Input validation,TC17-TC19,test_invalid_enrollment_form_does_not_write;test_missing_employee_form_field;test_rejected_enrollment_form;test_direct_function_rejects_non_integer_or_oversized_id,Q18
+R09,Dependent permission and duplicates,TC21;TC30,test_disable_dependents;test_rejected_enrollment_form;test_dependent_link_uniqueness,Q10
+R10,Dependent ownership,TC20,test_wrong_dependent;test_valid_dependent;test_enrollment_form_saves_dependent,"Q09,Q19"
+R11,Configuration validation,TC23-TC30,test_invalid_configuration_preserves_plan;test_missing_configuration_field;test_valid_configuration_affects_next_submission;test_configuration_preserves_existing_enrollments,"Q07,Q20"
+R12,Atomic enrollment writes,TC02;TC20;TC22,test_application_rolls_back_on_dependent_insert_failure;test_transaction_rollback,"Q08,Q10"
