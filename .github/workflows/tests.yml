@@ -19,7 +19,7 @@ jobs:
         # The application is nested; tests run from repository root.
         run: python -m pip install -r employee-benefits-qa/requirements.txt
       - name: Run pytest
-        run: python -m pytest tests/ -v --junitxml=artifacts/pytest-results.xml
+        run: python -m pytest tests/ -v -s --junitxml=artifacts/pytest-results.xml
       - name: Initialize sample database
         run: python employee-benefits-qa/database.py
       - name: Execute SQL portfolio
