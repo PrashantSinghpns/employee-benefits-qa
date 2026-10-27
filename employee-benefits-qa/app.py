@@ -1,16 +1,21 @@
-from flask import Flask, render_template_string, request
+from flask import Flask, render_template, request, jsonify
 import sqlite3
 import re
 from contextlib import closing
 from pathlib import Path
 from datetime import date, timedelta
 
-app = Flask(__name__)
-DB = Path(__file__).parent / "benefits.db"
+ROOT = Path(__file__).resolve().parent
+# Absolute asset paths make both supported launch commands serve the same UI.
+app = Flask(__name__, template_folder=str(ROOT / "templates"), static_folder=str(ROOT / "static"))
+DB = ROOT / "benefits.db"
 
 
 def get_db():
-    conn = sqlite3.connect(app.config.get("DATABASE", DB))
+    database = Path(app.config.get("DATABASE", DB))
+    if not database.exists():
+        raise sqlite3.OperationalError("Sample database is not initialized.")
+    conn = sqlite3.connect(database)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
@@ -34,91 +39,6 @@ def parse_date(value):
     if not isinstance(value, str) or not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value):
         raise ValueError("Date must use YYYY-MM-DD")
     return date.fromisoformat(value)
-
-
-HTML = """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Employee Benefits QA</title>
-    <style>
-        body {font-family: Arial; max-width: 750px;
-              margin: 40px auto; padding: 20px;}
-        h1 {color: #2563eb;}
-        form {background: #f1f5f9; padding: 25px;
-              border-radius: 12px;}
-        label {display: block; margin-top: 15px;}
-        select, input, button {padding: 10px; width: 100%;
-              box-sizing: border-box; margin-top: 5px;}
-        button {background: #2563eb; color: white;
-                border: 0; margin-top: 20px; cursor: pointer;}
-        .result {padding: 15px; margin-top: 20px;
-                 border-radius: 8px; background: #e2e8f0;}
-    </style>
-</head>
-<body>
-    <h1>Employee Benefits Administration</h1>
-    <p>Enrollment & Eligibility Testing</p>
-    <p><a href="/configure">Configure benefit plans</a></p>
-    <p>Use fictional records and an explicit scenario date for repeatable testing.</p>
-
-    <form method="POST">
-        <label>Employee</label>
-        <select name="employee_id" required>
-            {% for e in employees %}
-            {# Retain the submitted employee instead of selecting the first record. #}
-            <option value="{{ e['employee_id'] }}"
-                {% if request.form.get('employee_id') == e['employee_id']|string %}selected{% endif %}>
-                {{ e['name'] }} — {{ e['employment_type'] }}
-            </option>
-            {% endfor %}
-        </select>
-
-        <label>Benefit Plan</label>
-        <select name="plan_id" required>
-            {% for p in plans %}
-            {# Retain the plan on both successful and rejected submissions. #}
-            <option value="{{ p['plan_id'] }}"
-                {% if request.form.get('plan_id') == p['plan_id']|string %}selected{% endif %}>
-                {{ p['name'] }}
-            </option>
-            {% endfor %}
-        </select>
-
-        <label>Enrollment Date</label>
-        <input type="date" name="enrollment_date"
-               value="{{ request.form.get('enrollment_date', '2026-10-27') }}" required>
-               
-<label>Dependents (optional)</label>
-
-{% for d in dependents %}
-<label>
-    <input type="checkbox"
-           name="dependent_ids"
-           value="{{ d['dependent_id'] }}"
-           {# Retain checked dependents when the form is rendered again. #}
-           {% if d['dependent_id']|string in request.form.getlist('dependent_ids') %}checked{% endif %}
-           style="width:auto">
-    {{ d['name'] }} — Employee ID {{ d['employee_id'] }}
-</label>
-{% endfor %}
-
-        <button type="submit">Check & Enroll</button>
-    </form>
-
-    {% if message %}
-    <div class="result">{{ message }}</div>
-    {% endif %}
-    <h2>Current records</h2>
-    {% for title, rows in [('Employees', employees), ('Plans', plans),
-                            ('Dependents', dependents), ('Enrollments', enrollments)] %}
-    <details><summary>{{ title }} ({{ rows|length }})</summary>
-    {% for row in rows %}<p>{{ dict(row) }}</p>{% else %}<p>No records.</p>{% endfor %}
-    </details>
-    {% endfor %}
-</body>
-</html>
-"""
 
 
 def enroll(conn, employee_id, plan_id, enrollment_date, dependent_ids=None):
@@ -267,68 +187,12 @@ def home():
         enrollments = conn.execute("SELECT * FROM enrollments ORDER BY enrollment_id").fetchall()
 
 
-    return render_template_string(
-        HTML, employees=employees,
-        plans=plans, message=message, dependents=dependents, enrollments=enrollments, dict=dict
+    records = {"employees": [dict(row) for row in employees], "plans": [dict(row) for row in plans],
+               "dependents": [dict(row) for row in dependents], "enrollments": [dict(row) for row in enrollments]}
+    return render_template(
+        "index.html", employees=employees, plans=plans, message=message, dependents=dependents,
+        enrollments=enrollments, record_data=records, active_page="enrollment"
     )
-
-
-CONFIG_HTML = """
-<h1>Benefit Plan Configuration</h1>
-<a href="/">Back to Enrollment</a>
-
-<form method="POST">
-    <p>Select Plan:
-        <select name="plan_id" required>
-        {% for p in plans %}
-            {# Retain the plan on both successful and rejected submissions. #}
-            <option value="{{ p['plan_id'] }}"
-                {% if request.form.get('plan_id') == p['plan_id']|string %}selected{% endif %}>
-                {{ p['name'] }}
-            </option>
-        {% endfor %}
-        </select>
-    </p>
-
-    <p>Eligible Employment Type:
-        <select name="eligible_type">
-            {# Preserve the submitted eligibility type. #}
-            {% for kind in ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'ANY'] %}
-            <option value="{{ kind }}"
-                {% if request.form.get('eligible_type', 'FULL_TIME') == kind %}selected{% endif %}>{{ kind }}</option>
-            {% endfor %}
-        </select>
-    </p>
-
-    <p>Waiting Period (0–365 days):
-        <input type="number" name="waiting_days"
-               min="0" max="365" value="{{ request.form.get('waiting_days', '') }}" required>
-    </p>
-
-    <p>Enrollment Start:
-        <input type="date" name="window_start" value="{{ request.form.get('window_start', '') }}" required>
-    </p>
-
-    <p>Enrollment End:
-        <input type="date" name="window_end" value="{{ request.form.get('window_end', '') }}" required>
-    </p>
-
-    <p>Active:
-        <!-- Default to active only on the initial GET, not after an unchecked submission. -->
-        <input type="checkbox" name="active"
-               {% if request.method == 'GET' or 'active' in request.form %}checked{% endif %}>
-    </p>
-
-    <p>Allow Dependents:
-        <input type="checkbox" name="allow_dependents"
-               {% if 'allow_dependents' in request.form %}checked{% endif %}>
-    </p>
-
-    <button type="submit">Save Configuration</button>
-</form>
-
-<p>{{ message or "" }}</p>
-"""
 
 
 @app.route("/configure", methods=["GET", "POST"])
@@ -395,9 +259,50 @@ def configure():
             "SELECT * FROM benefit_plans"
         ).fetchall()
 
-    return render_template_string(
-        CONFIG_HTML, plans=plans, message=message
+    plan_records = [dict(row) for row in plans]
+    requested_id = request.form.get("plan_id") if request.method == "POST" else request.args.get("plan_id")
+    selected = next((row for row in plan_records if str(row["plan_id"]) == str(requested_id)), plan_records[0] if plan_records else None)
+    # On GET show persisted settings; on POST preserve submitted values, including invalid ones.
+    values = dict(selected or {})
+    if request.method == "POST":
+        for field in ("plan_id", "eligible_type", "waiting_days", "window_start", "window_end"):
+            values[field] = request.form.get(field, "")
+        values["active"] = "active" in request.form
+        values["allow_dependents"] = "allow_dependents" in request.form
+    return render_template(
+        "configure.html", plans=plan_records, values=values, message=message,
+        plan_data=plan_records, active_page="configuration"
     )
+
+@app.get("/api/data")
+def record_data():
+    # Return actual JSON for the records panel, using the canonical database schema.
+    with closing(get_db()) as conn:
+        tables = {"employees": ("employees", "employee_id"), "plans": ("benefit_plans", "plan_id"),
+                  "dependents": ("dependents", "dependent_id"), "enrollments": ("enrollments", "enrollment_id")}
+        data = {key: [dict(row) for row in conn.execute(f"SELECT * FROM {table} ORDER BY {pk}")]
+                for key, (table, pk) in tables.items()}
+    return jsonify(data)
+
+
+@app.errorhandler(sqlite3.OperationalError)
+def unavailable_database(error):
+    message = "Sample data could not be loaded. Initialize the demo database and restart the app."
+    if request.path.startswith("/api/"):
+        return jsonify(error=message), 503
+    return render_template("setup.html", message=message, active_page=""), 503
+
+
+@app.cli.command("init-db")
+def init_database_command():
+    # Resolve the initializer beside this file, independently of the working directory.
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("_benefits_database_initializer", ROOT / "database.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.initialize(app.config.get("DATABASE", DB))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
+

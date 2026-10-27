@@ -74,4 +74,5 @@ def test_initial_enrollment_date_and_configuration_defaults(client):
     configuration = FormState(client.get("/configure").get_data(as_text=True))
     assert configuration.selected["eligible_type"] == "FULL_TIME"
     assert "checked" in configuration.inputs["active"][0]
-    assert "checked" not in configuration.inputs["allow_dependents"][0]
+    assert "checked" in configuration.inputs["allow_dependents"][0]
+

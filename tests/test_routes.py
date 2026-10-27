@@ -24,7 +24,7 @@ def test_records_page(client):
     assert response.status_code == 200
     assert b"Current records" in response.data
     assert b"Kiran" in response.data
-    assert b"Configure benefit plans" in response.data
+    assert b"Plan configuration" in response.data
 
 
 def test_configuration_page(client):
@@ -160,3 +160,4 @@ def test_application_rolls_back_on_dependent_insert_failure(client, connection):
 def test_direct_function_rejects_non_integer_or_oversized_id(connection, value):
     assert "Invalid input" in enroll(connection, value, 1, "2026-10-10")
     assert count(connection) == 1
+

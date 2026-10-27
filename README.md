@@ -8,6 +8,20 @@ All **30 worksheet scenarios** passed through automated Flask requests and SQLit
 
 The worksheet preserves its original browser/manual result fields and adds separate Scenario_Status and Automated_* columns. There are still 4 recorded agent-browser passes and 26 cases without browser/manual execution. Do not claim 30 manual UI passes.
 
+## Repaired UI and one launch path
+
+The UI now includes responsive forms, readable record tables, live plan details, and a working JSON refresh. [UI verification report](docs/ui_refresh_report.md).
+
+Use the root launcher so separate app versions are not mixed:
+
+```powershell
+python -m pip install -r requirements.txt # Install the canonical dependencies.
+python -m flask --app app init-db # Initialize fictional data for a new copy only.
+python app.py # Open http://127.0.0.1:5000/ after starting the server.
+```
+
+If the canonical database already exists, skip initialization. Both root and nested launch commands now use employee-benefits-qa/benefits.db and the same template/static folders. Enrollment drafts are retained in the current browser tab; configuration settings load from the database when a plan is selected. Do not open the HTML file directly.
+
 ## Features
 
 - Active-employee and active-plan checks; configurable employment type and waiting period.

@@ -5,9 +5,7 @@ import sys
 import pytest
 
 # Locate app.py in your nested project.
-root = Path(__file__).resolve().parents[1]
-if not (root / "app.py").exists():
-    root = root / "employee-benefits-qa"
+root = Path(__file__).resolve().parents[1] / "employee-benefits-qa"
 
 sys.path.insert(0, str(root))
 
@@ -104,3 +102,4 @@ def test_disable_dependents(db):
 def test_configuration_constraint(db):
     with pytest.raises(sqlite3.IntegrityError):
         configure(db, waiting_days=400)
+
