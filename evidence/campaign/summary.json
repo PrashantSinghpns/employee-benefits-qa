@@ -1,0 +1,185 @@
+{
+  "tested_commit": "6462e9d02db912bfe886af17e6776f49961eb943",
+  "run_url": "https://github.com/PrashantSinghpns/employee-benefits-qa/actions/runs/40518820916",
+  "run_id": 40518820916,
+  "execution_method": "Automated Flask test-client requests with real isolated SQLite databases",
+  "scenarios_planned": 30,
+  "scenarios_executed": 30,
+  "passed": 30,
+  "failed": 0,
+  "assertions_checked": 243,
+  "full_pytest_suite": {
+    "passed": 106,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "manual_browser_history": {
+    "executed": 4,
+    "passed": 4,
+    "not_run": 26,
+    "case_ids": [
+      "TC08",
+      "TC09",
+      "TC15",
+      "TC25"
+    ]
+  },
+  "notes": [
+    "The original manual fields are unchanged. Scenario_Status and Automated_* columns record this run.",
+    "TC16 uses back-to-back requests; no concurrent load claim.",
+    "TC22 deliberately injects a SQLite trigger failure and verifies rollback; this is not a discovered defect."
+  ],
+  "cases": [
+    {
+      "test_id": "TC01",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC01.json"
+    },
+    {
+      "test_id": "TC02",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC02.json"
+    },
+    {
+      "test_id": "TC03",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC03.json"
+    },
+    {
+      "test_id": "TC04",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC04.json"
+    },
+    {
+      "test_id": "TC05",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC05.json"
+    },
+    {
+      "test_id": "TC06",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC06.json"
+    },
+    {
+      "test_id": "TC07",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC07.json"
+    },
+    {
+      "test_id": "TC08",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC08.json"
+    },
+    {
+      "test_id": "TC09",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC09.json"
+    },
+    {
+      "test_id": "TC10",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC10.json"
+    },
+    {
+      "test_id": "TC11",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC11.json"
+    },
+    {
+      "test_id": "TC12",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC12.json"
+    },
+    {
+      "test_id": "TC13",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC13.json"
+    },
+    {
+      "test_id": "TC14",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC14.json"
+    },
+    {
+      "test_id": "TC15",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC15.json"
+    },
+    {
+      "test_id": "TC16",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC16.json"
+    },
+    {
+      "test_id": "TC17",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC17.json"
+    },
+    {
+      "test_id": "TC18",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC18.json"
+    },
+    {
+      "test_id": "TC19",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC19.json"
+    },
+    {
+      "test_id": "TC20",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC20.json"
+    },
+    {
+      "test_id": "TC21",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC21.json"
+    },
+    {
+      "test_id": "TC22",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC22.json"
+    },
+    {
+      "test_id": "TC23",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC23.json"
+    },
+    {
+      "test_id": "TC24",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC24.json"
+    },
+    {
+      "test_id": "TC25",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC25.json"
+    },
+    {
+      "test_id": "TC26",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC26.json"
+    },
+    {
+      "test_id": "TC27",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC27.json"
+    },
+    {
+      "test_id": "TC28",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC28.json"
+    },
+    {
+      "test_id": "TC29",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC29.json"
+    },
+    {
+      "test_id": "TC30",
+      "status": "Pass",
+      "evidence": "evidence/campaign/TC30.json"
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+# Both launch commands use this one dependency list.
+-r employee-benefits-qa/requirements.txt

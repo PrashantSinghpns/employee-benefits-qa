@@ -1,0 +1,114 @@
+Fresh fictional baseline; scenario date in SQL: 2026-10-27. Executed 2026-10-27.
+
+Q01 RESULT:
+Columns: employee_id, name, employment_type, hire_date, active
+(1, 'Rahul', 'FULL_TIME', '2026-09-01', 1)
+(2, 'Priya', 'FULL_TIME', '2026-09-27', 1)
+(3, 'Aman', 'PART_TIME', '2026-08-01', 1)
+(5, 'Ravi', 'FULL_TIME', '2026-10-28', 1)
+(6, 'Sara', 'CONTRACT', '2026-08-01', 1)
+(7, 'Kiran', 'FULL_TIME', '2026-08-01', 1)
+(8, 'Anjali', 'FULL_TIME', '2026-08-15', 1)
+
+Q02 RESULT:
+Columns: name, hire_date
+('Rahul', '2026-09-01')
+('Priya', '2026-09-27')
+('Neha', '2026-08-01')
+('Ravi', '2026-10-28')
+('Kiran', '2026-08-01')
+('Anjali', '2026-08-15')
+
+Q03 RESULT:
+Columns: name, waiting_days
+('Medical Plus', 30)
+('Basic Wellness', 0)
+
+Q04 RESULT:
+Columns: name
+('Medical Plus',)
+('Basic Wellness',)
+
+Q05 RESULT:
+Columns: name, plan, eligible_date
+('Rahul', 'Medical Plus', '2026-10-01')
+('Priya', 'Medical Plus', '2026-10-27')
+('Aman', 'Medical Plus', '2026-08-31')
+('Neha', 'Medical Plus', '2026-08-31')
+('Ravi', 'Medical Plus', '2026-11-27')
+('Sara', 'Medical Plus', '2026-08-31')
+('Kiran', 'Medical Plus', '2026-08-31')
+('Anjali', 'Medical Plus', '2026-09-14')
+
+Q06 RESULT:
+Columns: name
+('Ravi',)
+
+Q07 RESULT:
+Columns: name, plan
+('Rahul', 'Basic Wellness')
+('Rahul', 'Medical Plus')
+('Priya', 'Basic Wellness')
+('Priya', 'Medical Plus')
+('Aman', 'Basic Wellness')
+('Sara', 'Basic Wellness')
+('Kiran', 'Basic Wellness')
+('Anjali', 'Basic Wellness')
+('Anjali', 'Medical Plus')
+
+Q08 RESULT:
+Columns: employee, plan, enrollment_date
+('Kiran', 'Medical Plus', '2026-10-10')
+
+Q09 RESULT:
+Columns: employee, dependent
+('Rahul', 'Rahul Child')
+('Anjali', 'Anjali Child')
+
+Q10 RESULT:
+Columns: employee, dependent, plan
+
+Q11 RESULT:
+Columns: name, total
+('Medical Plus', 1)
+('Basic Wellness', 0)
+('Inactive Dental', 0)
+
+Q12 RESULT:
+Columns: employment_type, total
+('CONTRACT', 0)
+('FULL_TIME', 1)
+('PART_TIME', 0)
+
+Q13 RESULT:
+Columns: name, total
+
+Q14 RESULT:
+Columns: name
+('Rahul',)
+('Priya',)
+('Aman',)
+('Neha',)
+('Ravi',)
+('Sara',)
+('Anjali',)
+
+Q15 RESULT:
+Columns: name
+('Basic Wellness',)
+('Inactive Dental',)
+
+Q16 RESULT:
+Columns: name, plan_count
+
+Q17 RESULT:
+Columns: employee_id, plan_id, total
+
+Q18 RESULT:
+Columns: enrollment_id
+
+Q19 RESULT:
+Columns: enrollment_id, dependent_id
+
+Q20 RESULT:
+Columns: enrollment_id, employee, plan

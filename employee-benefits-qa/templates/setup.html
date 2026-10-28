@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<section class="card setup-card"><p class="eyebrow">SETUP NEEDED</p><h1>Let's load your sample data.</h1><p>{{ message }}</p><p>From the project root, run:</p><pre>python -m flask --app app init-db</pre><p>Then start the app with <code>python app.py</code>. Existing databases are not overwritten.</p><a class="button primary" href="{{ url_for('home') }}">Try again</a></section>{% endblock %}
