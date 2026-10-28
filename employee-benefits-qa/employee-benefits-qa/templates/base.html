@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Benefits QA Lab{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css', v='3') }}">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('home') }}"><span class="brand-mark" aria-hidden="true">b<span>+</span></span><span>Benefits<span class="brand-light"> QA Lab</span></span></a>
+    <nav aria-label="Main navigation">
+      <a href="{{ url_for('home') }}" class="{{ 'current' if active_page == 'enrollment' else '' }}" {% if active_page == 'enrollment' %}aria-current="page"{% endif %}>Enrollment</a>
+      <a href="{{ url_for('configure') }}" class="{{ 'current' if active_page == 'configuration' else '' }}" {% if active_page == 'configuration' %}aria-current="page"{% endif %}>Plan configuration</a>
+    </nav>
+    <span class="environment"><span aria-hidden="true"></span>Local demo</span>
+  </header>
+  <main id="main" class="workspace">{% block content %}{% endblock %}</main>
+  <footer class="footer"><span>Benefits QA Lab <span class="footer-dot">·</span> Fictional employee records</span><span>Configuration <span class="footer-dot">/</span> Enrollment <span class="footer-dot">/</span> Validation</span></footer>
+  {% block page_data %}{% endblock %}
+  <script src="{{ url_for('static', filename='app.js', v='3') }}" defer></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">EMPLOYEE BENEFITS</p><h1>Enrollment workspace</h1><p class="subtitle">Choose coverage, check eligibility, and keep your records in view.</p></div><span class="outline-badge">Fictional data</span></div>
+
+<div class="stats" aria-label="Record summary">
+  <div class="stat"><span class="stat-label">Employees</span><strong data-count="employees">{{ employees|length }}</strong><span class="stat-note">Available employee records</span></div>
+  <div class="stat"><span class="stat-label">Benefit plans</span><strong data-count="plans">{{ plans|length }}</strong><span class="stat-note">Configured coverage options</span></div>
+  <div class="stat"><span class="stat-label">Enrollments</span><strong data-count="enrollments">{{ enrollments|length }}</strong><span class="stat-note">Saved coverage selections</span></div>
+  <div class="stat"><span class="stat-label">Dependents</span><strong data-count="dependents">{{ dependents|length }}</strong><span class="stat-note">Linked family records</span></div>
+</div>
+
+<div class="enrollment-grid">
+  <section class="card form-card">
+    <div class="card-heading"><div><p class="eyebrow">NEW ENROLLMENT</p><h2>Find the right coverage</h2></div><span class="step-tag">01</span></div>
+    <form method="POST" action="{{ url_for('home') }}" id="enrollment-form" data-submitted="{{ 'true' if request.method == 'POST' else 'false' }}">
+      <div class="form-grid">
+        <label>Employee<select name="employee_id" required>{% for e in employees %}<option value="{{ e['employee_id'] }}" {% if request.form.get('employee_id') == e['employee_id']|string %}selected{% endif %}>{{ e['name'] }} — {{ e['employment_type']|replace('_', ' ')|title }}</option>{% endfor %}</select></label>
+        <label>Benefit plan<select name="plan_id" id="enrollment-plan" required>{% for p in plans %}<option value="{{ p['plan_id'] }}" {% if request.form.get('plan_id') == p['plan_id']|string %}selected{% endif %}>{{ p['name'] }}</option>{% endfor %}</select></label>
+      </div>
+      <label>Enrollment date<input type="date" name="enrollment_date" value="{{ request.form.get('enrollment_date', '2026-10-27') }}" required><span class="field-hint">Use a scenario date to check the plan's enrollment window.</span></label>
+      <fieldset class="dependents"><legend>Include dependents <span>Optional</span></legend>{% for d in dependents %}<label class="check-row"><input type="checkbox" name="dependent_ids" value="{{ d['dependent_id'] }}" {% if d['dependent_id']|string in request.form.getlist('dependent_ids') %}checked{% endif %}><span><strong>{{ d['name'] }}</strong><small>Employee {{ d['employee_id'] }} · Dependent {{ d['dependent_id'] }}</small></span></label>{% else %}<p class="field-hint">No dependents are available.</p>{% endfor %}</fieldset>
+      <div class="form-actions"><button type="submit" class="button primary">Check &amp; Enroll <span aria-hidden="true">→</span></button><span>Eligibility is checked before saving.</span></div>
+    </form>
+    {% if message %}<div class="notice {{ 'success' if message.startswith('Success:') else 'error' }}" role="status" aria-live="polite"><span class="notice-icon" aria-hidden="true">{{ '✓' if message.startswith('Success:') else '!' }}</span><div><strong>{{ 'Enrollment saved' if message.startswith('Success:') else 'Enrollment not saved' }}</strong><p>{{ message }}</p></div></div>{% endif %}
+  </section>
+
+  <aside class="card plan-card" aria-label="Selected plan details"><div class="card-heading"><div><p class="eyebrow">COVERAGE OVERVIEW</p><h2 id="plan-name">Selected plan</h2></div><span class="plan-icon" aria-hidden="true">+</span></div><span id="plan-status" class="status-badge">Plan details</span><dl class="plan-facts"><div><dt>Eligible employment</dt><dd id="plan-type">—</dd></div><div><dt>Waiting period</dt><dd id="plan-waiting">—</dd></div><div><dt>Enrollment window</dt><dd id="plan-window">—</dd></div><div><dt>Dependent coverage</dt><dd id="plan-dependents">—</dd></div></dl><div class="tip"><span aria-hidden="true">i</span><p>Waiting periods and enrollment dates are checked together. Both window endpoints are included.</p></div><a class="text-link" id="edit-selected-plan" href="{{ url_for('configure') }}">Configure this plan <span aria-hidden="true">↗</span></a></aside>
+</div>
+
+<section class="card records-card"><div class="card-heading"><div><p class="eyebrow">DATA EXPLORER</p><h2>Current records</h2></div><button type="button" class="button secondary" id="refresh-records">Refresh records</button></div><div class="record-tabs" role="tablist" aria-label="Record type">{% for key,label in [('employees','Employees'),('plans','Benefit plans'),('enrollments','Enrollments'),('dependents','Dependents')] %}<button type="button" role="tab" class="record-tab {{ 'selected' if loop.first else '' }}" aria-selected="{{ 'true' if loop.first else 'false' }}" aria-controls="panel-{{ key }}" id="tab-{{ key }}" data-table="{{ key }}">{{ label }} <span data-count="{{ key }}">{{ record_data[key]|length }}</span></button>{% endfor %}</div><p id="records-status" class="records-status" role="status" aria-live="polite"></p>{% for key,rows in record_data.items() %}<div class="table-scroll" role="tabpanel" id="panel-{{ key }}" aria-labelledby="tab-{{ key }}" {% if key != 'employees' %}hidden{% endif %}><div data-table-content="{{ key }}">{% if rows %}<table><thead><tr>{% for column in rows[0].keys() %}<th scope="col">{{ column|replace('_',' ')|title }}</th>{% endfor %}</tr></thead><tbody>{% for row in rows %}<tr>{% for column,value in row.items() %}<td>{{ value }}</td>{% endfor %}</tr>{% endfor %}</tbody></table>{% else %}<div class="empty-state">No {{ key }} yet.</div>{% endif %}</div></div>{% endfor %}</section>
+{% endblock %}
+{% block page_data %}<script id="page-data" type="application/json">{{ record_data|tojson }}</script>{% endblock %}

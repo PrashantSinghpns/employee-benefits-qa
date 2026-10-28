@@ -1,0 +1,165 @@
+{
+  "test_id": "TC27",
+  "tested_commit": "6462e9d02db912bfe886af17e6776f49961eb943",
+  "executed_at": "2026-10-27T19:42:10.132045+05:30",
+  "method": "Automated Flask test-client request + SQLite verification",
+  "environment": {
+    "python": "3.12.15",
+    "flask": "3.1.3",
+    "sqlite": "3.45.1",
+    "platform": "Linux"
+  },
+  "initial_database": {
+    "enrollments": [
+      {
+        "enrollment_id": 1,
+        "employee_id": 7,
+        "plan_id": 1,
+        "enrollment_date": "2026-10-10",
+        "created_at": "2026-10-27 14:12:10"
+      }
+    ],
+    "dependent_links": []
+  },
+  "requests": [
+    {
+      "path": "/configure",
+      "form": {
+        "plan_id": "1",
+        "eligible_type": "FULL_TIME",
+        "waiting_days": "30",
+        "window_start": "2026-10-15",
+        "window_end": "2026-10-31",
+        "active": "on",
+        "allow_dependents": "on"
+      },
+      "http_status": 200,
+      "message": "Success: Configuration saved!"
+    },
+    {
+      "path": "/",
+      "form": {
+        "employee_id": "8",
+        "plan_id": "1",
+        "enrollment_date": "2026-10-10"
+      },
+      "http_status": 200,
+      "message": "Rejected: Outside enrollment window."
+    }
+  ],
+  "assertions": [
+    {
+      "description": "Request handled without server error",
+      "actual": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "description": "Configuration accepted",
+      "actual": true,
+      "expected": true,
+      "passed": true
+    },
+    {
+      "description": "Persisted configuration eligible_type",
+      "actual": "FULL_TIME",
+      "expected": "FULL_TIME",
+      "passed": true
+    },
+    {
+      "description": "Persisted configuration waiting_days",
+      "actual": 30,
+      "expected": 30,
+      "passed": true
+    },
+    {
+      "description": "Persisted configuration window_start",
+      "actual": "2026-10-15",
+      "expected": "2026-10-15",
+      "passed": true
+    },
+    {
+      "description": "Persisted configuration window_end",
+      "actual": "2026-10-31",
+      "expected": "2026-10-31",
+      "passed": true
+    },
+    {
+      "description": "Persisted configuration active",
+      "actual": 1,
+      "expected": 1,
+      "passed": true
+    },
+    {
+      "description": "Persisted configuration allow_dependents",
+      "actual": 1,
+      "expected": 1,
+      "passed": true
+    },
+    {
+      "description": "Request handled without server error",
+      "actual": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "description": "Expected response message",
+      "actual": true,
+      "expected": true,
+      "passed": true
+    },
+    {
+      "description": "Enrollment count",
+      "actual": 1,
+      "expected": 1,
+      "passed": true
+    },
+    {
+      "description": "Dependent-link count",
+      "actual": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "description": "Rejected submission changes no enrollment/link rows",
+      "actual": {
+        "enrollments": [
+          {
+            "enrollment_id": 1,
+            "employee_id": 7,
+            "plan_id": 1,
+            "enrollment_date": "2026-10-10",
+            "created_at": "2026-10-27 14:12:10"
+          }
+        ],
+        "dependent_links": []
+      },
+      "expected": {
+        "enrollments": [
+          {
+            "enrollment_id": 1,
+            "employee_id": 7,
+            "plan_id": 1,
+            "enrollment_date": "2026-10-10",
+            "created_at": "2026-10-27 14:12:10"
+          }
+        ],
+        "dependent_links": []
+      },
+      "passed": true
+    }
+  ],
+  "status": "Pass",
+  "final_database": {
+    "enrollments": [
+      {
+        "enrollment_id": 1,
+        "employee_id": 7,
+        "plan_id": 1,
+        "enrollment_date": "2026-10-10",
+        "created_at": "2026-10-27 14:12:10"
+      }
+    ],
+    "dependent_links": []
+  }
+}
